@@ -5,25 +5,26 @@
         <title>INF552 - 2023 - Project</title>
         <!-- https://d3js.org/ -->
         <script type="text/javascript" src="js/d3.v7.min.js"></script>
+        <script type="text/javascript" src="js/test_visualizations.js"></script>
         <style>
 svg {
     display: block;
     border: 1px solid #444;
     margin-left: auto;
     margin-right: auto;
+    font-size: 10px;
 }
 
-.axisLb {
-    text-anchor:middle;
-    font-family:sans-serif;
-    font-size:8pt;
+.boxplot {
+    stroke-width:1.2px;
+    stroke:#666;
+    fill:none;
 }
         </style>
     </head>
 
-    <body onload="createViz()">
-        <div id="main">
-        </div>
+    <body onload="createViz();">
+        <div id="main"></div>
     </body>
 
 </html>
