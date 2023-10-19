@@ -3,10 +3,13 @@
 <head>
   <title>Carte des Aéroports</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-</head>
-<body>
-  <div id="map" style="width: 800px; height: 600px;"></div>
+  <script type="text/javascript" src="/js/d3.v7.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="/js/d3-geo-projection.v2.min.js"></script>
   <script src="carte.js"></script>
+</head>
+<body onload="loadMap()">
+  <div id="mapid" style="width: 800px; height: 600px;"></div>
+
 </body>
 </html>
