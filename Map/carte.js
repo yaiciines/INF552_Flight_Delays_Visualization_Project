@@ -52,23 +52,3 @@ function plot_airpot(collection,map) {
   map.on("zoom", updateMarkers);
   map.on("viewreset", updateMarkers);
 };
-
-// // Récupérer les données des aéroports depuis le serveur PHP
-// fetch('affichage.php')
-//   .then(response => response.json())
-//   .then(data => {
-//   // Traiter les données et les ajouter à la carte
-//   data.forEach(aeroport => {
-//     let marker = L.marker([aeroport.Latitude, aeroport.Longitude],{ icon: avionIcon })
-//       .addTo(map)
-//       .bindPopup(`
-//       <strong>Nom de l'aéroport:</strong> ${aeroport.AIRPORT}<br>
-//       <strong>IATA:</strong> ${aeroport.IATA_CODE}<br>
-//       <strong>Latitude:</strong> ${aeroport.Latitude}<br>
-//       <strong>Longitude:</strong> ${aeroport.Longitude}
-//     `);
-//     marker.on('click', function() {
-//       marker.openPopup();
-//     });
-//     });
-//   });
