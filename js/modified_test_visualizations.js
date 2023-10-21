@@ -4,11 +4,16 @@ const ctx = {
     JITTER_W:50
 };
 
+const delayColumns = ['CarrierDelay', 'WeatherDelay', 'NASDelay', 'SecurityDelay', 'LateAircraftDelay'];
+
+const color = d3.scaleOrdinal()
+.domain(delayColumns)
+.range(['#FF5733', '#33FF57', '#5733FF', '#FF33A6', '#A633FF']);
+
+
 //==============================================================================================
 function processDelayData(data) {
     const airlines = data.map(d => d.Marketing_Airline_Network);
-
-    const delayColumns = ['CarrierDelay', 'WeatherDelay', 'NASDelay', 'SecurityDelay', 'LateAircraftDelay'];
 
     const countByAirline = {};
     const countWithDelays = {};
@@ -66,10 +71,6 @@ function processDelayData(data) {
         .nice()
         .range([height - margin.bottom, margin.top]);
 
-    const color = d3.scaleOrdinal()
-        .domain(delayColumns)
-        .range(['#FF5733', '#33FF57', '#5733FF', '#FF33A6', '#A633FF']);
-
     const xAxis = g => g
         .attr("transform", `translate(0,${height - margin.bottom})`)
         .call(d3.axisBottom(x))
@@ -93,7 +94,18 @@ function processDelayData(data) {
         .attr("x", d => x(d.AIRLINE) + x.bandwidth() / delayColumns.length * delayColumns.indexOf(d.delay))
         .attr("y", d => y(d.percentage))
         .attr("width", x.bandwidth() / delayColumns.length)
-        .attr("height", d => y(0) - y(d.percentage));
+        .attr("height", d => y(0) - y(d.percentage))
+
+        .on("click", function(d) {
+            if (d3.select(this).classed("highlighted")) {  // Vérifiez si l'élément est déjà en surbrillance
+                unhighlight();
+                d3.select(this).classed("highlighted", false);
+            } else {
+                d3.selectAll(".highlighted").classed("highlighted", false); // Retirez la surbrillance des autres éléments
+                highlight(color(d.delay));
+                d3.select(this).classed("highlighted", true);
+            }
+        })
 
     // Ajout des lignes d'incertitude
     const uncertaintyLines = svg.append("g")
@@ -204,14 +216,108 @@ function processDelayData(data) {
 };
 
 //==============================================================================================
+function createPieChart(data) {
+
+    // Calculer le total pour chaque type de retard
+    const delayTotals = delayColumns.map(column => {
+        return {
+            type: column,
+            value: data.reduce((acc, curr) => acc + (parseInt(curr[column]) || 0), 0)
+        };
+    });
+
+    const totalDelays = delayTotals.reduce((acc, curr) => acc + curr.value, 0);
+
+    const width = 300;
+    const height = 300;
+    const radius = Math.min(width, height) / 2;
+
+
+    const pie = d3.pie()
+        .value(d => d.value);
+
+    const arc = d3.arc()
+        .outerRadius(radius - 10)
+        .innerRadius(0);
+
+    const svg = d3.select("#main").append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    const g = svg.selectAll(".arc")
+        .data(pie(delayTotals))
+        .enter().append("g")
+        .attr("class", "arc");
+    
+    g.append("path")
+        .attr("d", arc)
+        .style("fill", d => d.data ? color(d.data.type) : "black")
+        .on("click", function(d) {
+            if (d3.select(this).classed("highlighted")) {  // Vérifiez si l'élément est déjà en surbrillance
+                unhighlight();
+                d3.select(this).classed("highlighted", false);
+            } else {
+                d3.selectAll(".highlighted").classed("highlighted", false); // Retirez la surbrillance des autres éléments
+                highlight(color(d.data.type));
+                d3.select(this).classed("highlighted", true);
+            }
+        })
+
+
+    g.append("text")
+        .attr("transform", d => "translate(" + arc.centroid(d) + ")")
+        .attr("dy", ".35em")
+        .text(d => `${((d.data.value / totalDelays) * 100).toFixed(2)}%`);
+
+
+    const legend = svg.selectAll(".legend")
+        .data(color.domain())
+        .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", (d, i) => "translate(0," + i * 20 + ")");
+
+    legend.append("rect")
+        .attr("x", width - 18)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", color);
+
+    legend.append("text")
+        .attr("x", width - 24)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "end")
+        .text(d => d);
+}
+//==============================================================================================
+
+// Fonction pour mettre en évidence un élément
+function highlight(selectedColor) {
+    // Réduire l'opacité de tous les éléments sauf ceux qui ont la couleur sélectionnée
+
+    d3.selectAll("rect")
+        .style("opacity", d => color(d.delay) === selectedColor ? 1 : 0.3);
+
+    d3.selectAll(".arc path")
+        .style("opacity", d => color(d.data.type) === selectedColor ? 1 : 0.3);
+}
+
+// Fonction pour retirer l'effet de surbrillance
+function unhighlight() {
+    d3.selectAll("rect").style("opacity", 1);
+    d3.selectAll(".arc path").style("opacity", 1);
+}
 
 //==============================================================================================
 
 function loadData() {
     d3.json("../js/causes_query.php")
         .then(function (Data) {
-            console.log(`Nombre de vols: ${Data.length}`);
+            console.log(`Nombre de lignes: ${Data.length}`);
             processDelayData(Data);
+            createPieChart(Data);
         })
         .catch(function (error) {
             console.log(error);
