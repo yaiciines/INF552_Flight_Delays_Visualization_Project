@@ -6,7 +6,7 @@
   <script type="text/javascript" src="/js/d3.v7.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="/js/d3-geo-projection.v2.min.js"></script>
-  <script src="carte.js"></script>
+  <script src="delay.js"></script>
 </head>
 <body onload="loadMap()">
   <form>
@@ -20,6 +20,11 @@
           <option value="2019">2019</option>
           <option value="2018">2018</option>
         </select>
+        <label for="min-delay">Min Delay:</label>
+        <input type="text" id="min-delay-select" name="min-delay" value="5">
+        <label for="max-delay">Max Delay:</label>
+        <input type="text" id="max-delay-select" name="max-delay" value="100">
+        <input type="button" value="Submit" onclick="sendSelection()">
       </form>
   <div id="mapid" style="width: 800px; height: 600px;"></div>
 
