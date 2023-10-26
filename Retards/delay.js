@@ -18,6 +18,8 @@ function loadMap() {
 };
 
 function sendSelection() {
+  d3.select("#mapid").select("svg").selectAll("g").remove();
+
   let airline = document.getElementById('airline-select').value;
   const state = document.getElementById('state-select').value;
   let year = document.getElementById('year-select').value;
@@ -26,7 +28,7 @@ function sendSelection() {
   console.log(airline, state, year);
   let url = `delay.php`;
   let params = `?airline=${airline}&state=${state}&year=${year}&min_delay=${min_delay}&max_delay=${max_delay}`; 
-  d3.json(url, function(error, collection){
+  d3.json(url+params, function(error, collection){
     if (error) throw error;
   }).then(function(collection) {
     console.log(collection);
