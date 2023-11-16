@@ -1,5 +1,5 @@
 <?php
-include 'config.php';
+include(dirname(__DIR__).'/Retards/config.php');
 
 $mysqli = new mysqli($host, $user, $password, $database);
 $mysqli->set_charset("utf8");

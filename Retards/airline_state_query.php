@@ -1,5 +1,10 @@
 <?php
-include 'config.php';
+
+$host="gr3z.eu";
+$user="x9p31ij2_inf552";
+$password="Y7!8F&HV*vb^V*kep^op";
+$database="x9p31ij2_inf552";
+
 
 $mysqli = new mysqli($host, $user, $password, $database);
 $mysqli->set_charset("utf8");
