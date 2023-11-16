@@ -26,9 +26,8 @@ function sendSelection() {
   let min_delay = document.getElementById('min-delay-select').value;
   let max_delay = document.getElementById('max-delay-select').value;
   console.log(airline, state, year);
-  let url = `delay.php`;
-  let params = `?airline=${airline}&state=${state}&year=${year}&min_delay=${min_delay}&max_delay=${max_delay}`; 
-  d3.json(url+params, function(error, collection){
+  let url = `delay.php?airline=${airline}&state=${state}&year=${year}&min_delay=${min_delay}&max_delay=${max_delay}`;
+  d3.json(url, function(error, collection){
     if (error) throw error;
   }).then(function(collection) {
     console.log(collection);

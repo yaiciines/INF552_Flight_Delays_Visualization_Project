@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Carte des Aéroports</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <script type="text/javascript" src="/Inf552/js/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="/Inf552/js/d3-geo-projection.V2.min.js"></script>
+  <script src="delay.js"></script>
+</head>
+<body onload="loadMap()">
+  <form>
+        <select name="year" id="year-select">
+          <option value="2023">2023</option>
+          <option value="2022">2022</option>
+          <option value="2021">2021</option>
+          <option value="2020">2020</option>
+          <option value="2019">2019</option>
+          <option value="2018">2018</option>
+        </select>
+       <select name="DepArr" id="sens-select">
+          <option value="DepDelay">Sens des départs</option>
+          <option value="ArrDelay">Sens des arrivées</option>
+        </select>
+        <input type="button" value="Submit" onclick="sendSelection()">
+      </form>
+  <div id="mapid" style="width: 800px; height: 600px;"></div>
+
+</body>
+</html>
