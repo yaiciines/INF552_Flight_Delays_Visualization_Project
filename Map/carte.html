@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Carte des Aéroports</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <script type="text/javascript" src="/js/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="/js/d3-geo-projection.v2.min.js"></script>
+  <script src="carte.js"></script>
+</head>
+<body onload="loadMap()">
+  <form>
+        <select name="airline" id="airline-select"></select>
+        <select name="state" id="state-select"></select>
+        <select name="year" id="year-select">
+          <option value="2023">2023</option>
+          <option value="2022">2022</option>
+          <option value="2021">2021</option>
+          <option value="2020">2020</option>
+          <option value="2019">2019</option>
+          <option value="2018">2018</option>
+        </select>
+      </form>
+  <div id="mapid" style="width: 800px; height: 600px;"></div>
+
+</body>
+</html>
+
+<script>
+  //Peuplement des options du formulaire
+  // Récupération des données JSON depuis api.php
+  fetch('airline_state_query.php')
+  .then(response => response.json())
+  .then(data => {
+    // Appel de la fonction pour peupler le select avec les données JSON
+    populateSelect(data);
+  })
+  .catch(error => console.error('Erreur lors de la récupération des données :', error));
+
+  function populateSelect(data) {
+    let selectElement = document.getElementById('airline-select');
+  
+    // Supprimer toutes les options existantes
+    selectElement.innerHTML = '';
+    // Ajouter les options à partir des données JSON
+    data[0]['Airlines'].forEach(option => {
+      const optionElement = document.createElement('option');
+      optionElement.value = option.Marketing_Airline_Network;
+      optionElement.textContent = option.Airline_name; 
+      selectElement.appendChild(optionElement);
+    });
+    selectElement = document.getElementById('state-select');
+  
+    // Supprimer toutes les options existantes
+    selectElement.innerHTML = '';
+    data[0]['States'].forEach(option => {
+      const optionElement = document.createElement('option');
+      optionElement.value = option.StateCode; 
+      optionElement.textContent = option.StateName;
+      selectElement.appendChild(optionElement);
+    });
+  }
+</script>

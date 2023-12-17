@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Carte des Aéroports</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <script type="text/javascript" src="/Inf552/js/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="/Inf552/js/d3-geo-projection.V2.min.js"></script>
+  <link href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.5/leaflet.css' rel='stylesheet' type='text/css'/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.5/leaflet-src.js"></script>
+  <script src="/Inf552/js/L.D3SvgOverlay.min.js"></script>
+  <script src="delay_bis.js"></script>
+  <meta charset="utf-8" />
+  <style>
+    .marker.inactive,
+    .curve.inactive {
+      opacity: 0.3; /* Changez cela selon vos préférences */
+    }
+  
+    .marker.active,
+    .curve.active {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body onload="createViz()">
+  <form>
+        <select name="airline" id="airline-select"></select>
+        <select name="state" id="state-select"></select>
+        <select name="year" id="year-select">
+          <option value="2023">2023</option>
+          <option value="2022">2022</option>
+          <option value="2021">2021</option>
+          <option value="2020">2020</option>
+          <option value="2019">2019</option>
+          <option value="2018">2018</option>
+        </select>
+        <label for="min-delay">Min Delay:</label>
+        <input type="text" id="min-delay-select" name="min-delay" value="5">
+        <label for="max-delay">Max Delay:</label>
+        <input type="text" id="max-delay-select" name="max-delay" value="100">
+        <input type="button" value="Submit" onclick="loadData()">
+      </form>
+  <div id="mapid" style="width: 800px; height: 600px;"></div>
+
+</body>
+</html>
+
+<script>
+  //Peuplement des options du formulaire
+  // Récupération des données JSON depuis api.php
+  fetch('airline_state_query.php')
+  .then(response => response.json())
+  .then(data => {
+    // Appel de la fonction pour peupler le select avec les données JSON
+    populateSelect(data);
+  })
+  .catch(error => console.error('Erreur lors de la récupération des données :', error));
+
+  function populateSelect(data) {
+    let selectElement = document.getElementById('airline-select');
+  
+    // Supprimer toutes les options existantes
+    selectElement.innerHTML = '';
+    // Ajouter les options à partir des données JSON
+    data[0]['Airlines'].forEach(option => {
+      const optionElement = document.createElement('option');
+      optionElement.value = option.Marketing_Airline_Network;
+      optionElement.textContent = option.Airline_name; 
+      selectElement.appendChild(optionElement);
+    });
+    selectElement = document.getElementById('state-select');
+  
+    // Supprimer toutes les options existantes
+    selectElement.innerHTML = '';
+    data[0]['States'].forEach(option => {
+      const optionElement = document.createElement('option');
+      optionElement.value = option.StateCode; 
+      optionElement.textContent = option.StateName;
+      selectElement.appendChild(optionElement);
+    });
+  }
+</script>

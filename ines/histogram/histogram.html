@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>INF552 - 2023 - Project</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <script type="text/javascript" src="./d3.v7.min.js"></script>
+        <script type="text/javascript" src="./histogram.js"></script>
+        <style>
+            svg {
+                display: block;
+                border: 1px solid #444;
+                margin-left: auto;
+                margin-right: auto;
+                font-size: 10px;
+            }
+
+            .boxplot {
+                stroke-width:1.2px;
+                stroke:#666;
+                fill:none;
+            }
+        </style>
+    </head>
+
+    <body onload="createViz();">
+      <button onclick="update('CarrierDelay')">CarrierDelay </button>
+      <button onclick="update('WeatherDelay')">WeatherDelay</button>
+      <button onclick="update('NASDelay')">NASDelay</button>
+      <button onclick="update('SecurityDelay')">SecurityDelay</button>
+      <button onclick="update('LateAircraftDelay')">LateAircraftDelay</button>
+        <form>
+            <select name="airline" id="airline-select"></select>
+            <select name="state" id="state-select"></select>
+            <select name="year" id="year-select">
+              <option value="2023">2023</option>
+              <option value="2022">2022</option>
+              <option value="2021">2021</option>
+              <option value="2020">2020</option>
+              <option value="2019">2019</option>
+              <option value="2018">2018</option>
+            </select>
+          </form>
+
+        <div id="main"></div>
+    </body>
+
+</html>
+
+
+<script>
+  //Peuplement des options du formulaire
+  // Récupération des données JSON depuis api.php
+  fetch('../query.php')
+  .then(response => {
+    if (response.ok && response.headers.get('content-type')?.includes('application/json')) {
+      return response.json();
+    }
+    throw new Error('Not a JSON response');
+  })
+  .then(data => {
+    populateSelect(data);
+  })
+  .catch(error => console.error('Erreur lors de la récupération des données :', error));
+
+  fetch('../query.php')
+  .then(response => response.json())
+  .then(data => {
+    // Appel de la fonction pour peupler le select avec les données JSON
+    populateSelect(data);
+  })
+  .catch(error => console.error('Erreur lors de la récupération des données :', error));
+
+
+  function populateSelect(data) {
+    //log une partie sur la console pour vérifier que les données sont bien récupérées
+    console.log(data);
+    let selectElement = document.getElementById('airline-select');
+  
+    // Supprimer toutes les options existantes
+    selectElement.innerHTML = '';
+    // Ajouter les options à partir des données JSON
+    data[0]['Airlines'].forEach(option => {
+      const optionElement = document.createElement('option');
+      optionElement.value = option.Marketing_Airline_Network;
+      optionElement.textContent = option.Airline_name; 
+      selectElement.appendChild(optionElement);
+    });
+    selectElement = document.getElementById('state-select');
+  
+    // Supprimer toutes les options existantes
+    selectElement.innerHTML = '';
+    data[0]['States'].forEach(option => {
+      const optionElement = document.createElement('option');
+      optionElement.value = option.StateCode; 
+      optionElement.textContent = option.StateName;
+      selectElement.appendChild(optionElement);
+    });
+  }
+</script>
